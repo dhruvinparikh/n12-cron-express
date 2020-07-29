@@ -35,10 +35,8 @@ const job = async () => {
   });
 };
 
-job().then(console.log);
-
 // At 07:00 on every day-of-month
 // from 1 through 31 and on every day-of-week from Sunday through Saturday
 // in every month from January through December. => 0 7 1-31 1-12 sun-sat
 // schedule takes two arguments, cron time and the task to call when we reach that time
-// cron.schedule(morningScheduleat7, job);
+cron.schedule(morningScheduleat7, job);
