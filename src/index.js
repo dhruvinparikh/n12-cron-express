@@ -13,6 +13,7 @@ const morningScheduleat7 = process.env.CRON_EXPRESSION;
 const job = async () => {
   const result = await getAllNotifications();
   const notificationUuidArr = result.map(({ uuid }) => uuid);
+  // Iterates over the collection.
   async.mapSeries(notificationUuidArr, async (notificationUuid) => {
     // get the blocknumber
     const blockNumber = await getBlockNumber();
