@@ -1,6 +1,7 @@
 require("dotenv").config("../.env");
 const cron = require("node-cron");
 const async = require("async");
+const express = require("express");
 const notifications = require("./libs/");
 const {
   getAllNotifications,
@@ -10,6 +11,8 @@ const {
 const { getBlockNumber } = require("./services/web3");
 const morningScheduleat7 = process.env.CRON_EXPRESSION;
 const { logger } = require("./config/logging");
+
+const app = express();
 
 const job = async () => {
   const result = await getAllNotifications();
@@ -54,3 +57,5 @@ const job = async () => {
 // in every month from January through December. => 0 7 1-31 1-12 sun-sat
 // schedule takes two arguments, cron time and the task to call when we reach that time
 cron.schedule(morningScheduleat7, job);
+
+app.listen("3128");
