@@ -9,30 +9,43 @@ const {
 } = require("./services/db/");
 const { getBlockNumber } = require("./services/web3");
 const morningScheduleat7 = process.env.CRON_EXPRESSION;
+const { logger } = require("./config/logging");
 
 const job = async () => {
   const result = await getAllNotifications();
   const notificationUuidArr = result.map(({ uuid }) => uuid);
   // Iterates over the collection.
   async.mapSeries(notificationUuidArr, async (notificationUuid) => {
-    // get the blocknumber
-    const blockNumber = await getBlockNumber();
-    // create an entry in data table
-    const insertTX = await insertNotificationData({
-      notificationUuid,
-      blockNumber,
-    });
-    const result = await notifications[notificationUuid]({
-      defaultBlock: blockNumber,
-    });
-    const data = JSON.stringify({ result });
-    await updateNotificationData(
-      { data },
-      {
-        notificationUuid: insertTX.notificationUuid,
-        blockNumber: insertTX.blockNumber,
-      }
-    );
+    try {
+      // get the blocknumber
+      logger.info(`Started fetching blocknumber for ${notificationUuid}`);
+      const blockNumber = await getBlockNumber();
+      logger.info(`Finished fetching blocknumber for ${notificationUuid}`);
+      // create an entry in data table
+      logger.info(`Started pushing blocknumber for ${notificationUuid}`);
+      const insertTX = await insertNotificationData({
+        notificationUuid,
+        blockNumber,
+      });
+      logger.info(`Finished pushing blocknumber for ${notificationUuid}`);
+      logger.info(`Started fetching data for ${notificationUuid}`);
+      const result = await notifications[notificationUuid]({
+        defaultBlock: blockNumber,
+      });
+      logger.info(`Finished fetching data for ${notificationUuid}`);
+      const data = JSON.stringify({ result });
+      logger.info(`Started pushing data for ${notificationUuid}`);
+      await updateNotificationData(
+        { data },
+        {
+          notificationUuid: insertTX.notificationUuid,
+          blockNumber: insertTX.blockNumber,
+        }
+      );
+      logger.info(`Finished pushing data for ${notificationUuid}`);
+    } catch (e) {
+      logger.error(`Error [${notificationUuid}]=> ${e}`);
+    }
   });
 };
 
