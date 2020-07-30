@@ -8,7 +8,7 @@ const {
   updateNotificationData,
 } = require("./services/db/");
 const { getBlockNumber } = require("./services/web3");
-const morningScheduleat7 = "0 7 1-31 1-12 sun-sat";
+const morningScheduleat7 = process.env.CRON_EXPRESSION;
 
 const job = async () => {
   const result = await getAllNotifications();
