@@ -2,5 +2,5 @@
 const { getTotalDAISupply } = require("./dai");
 
 module.exports = {
-  "00000001-2c32-4564-8d54-e00d4001b744": getTotalDAISupply,
+  "6247e0e5-0e64-4d95-a113-20330be75251": getTotalDAISupply,
 };
