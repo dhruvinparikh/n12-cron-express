@@ -1,0 +1,37 @@
+{
+  "name": "n12-cron-express",
+  "version": "1.0.0",
+  "description": "N12 cron services.",
+  "main": "index.js",
+  "scripts": {
+    "test": "echo \"Error: no test specified\" && exit 1",
+    "start": "node ./src/index.js"
+  },
+  "repository": {
+    "type": "git",
+    "url": "git+https://github.com/blockxlabs/n12-cron-express.git"
+  },
+  "keywords": [],
+  "author": "",
+  "license": "ISC",
+  "bugs": {
+    "url": "https://github.com/blockxlabs/n12-cron-express/issues"
+  },
+  "homepage": "https://github.com/blockxlabs/n12-cron-express#readme",
+  "dependencies": {
+    "async": "^3.2.0",
+    "dotenv": "^8.2.0",
+    "express": "^4.17.1",
+    "node-cron": "^2.0.3",
+    "pg": "^8.3.0",
+    "pg-hstore": "^2.3.3",
+    "sequelize": "^6.3.3",
+    "web3": "^1.2.11"
+  },
+  "devDependencies": {
+    "sequelize-auto-migrations": "^1.0.3",
+    "sequelize-cli": "^6.2.0",
+    "winston": "^3.3.3",
+    "winston-daily-rotate-file": "^4.5.0"
+  }
+}
