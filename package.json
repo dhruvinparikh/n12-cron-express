@@ -9,15 +9,15 @@
   },
   "repository": {
     "type": "git",
-    "url": "git+https://github.com/dhruvinparikh93/n12-cron-express.git"
+    "url": "git+https://github.com/blockxlabs/n12-cron-express.git"
   },
   "keywords": [],
   "author": "",
   "license": "ISC",
   "bugs": {
-    "url": "https://github.com/dhruvinparikh93/n12-cron-express/issues"
+    "url": "https://github.com/blockxlabs/n12-cron-express/issues"
   },
-  "homepage": "https://github.com/dhruvinparikh93/n12-cron-express#readme",
+  "homepage": "https://github.com/blockxlabs/n12-cron-express#readme",
   "dependencies": {
     "async": "^3.2.0",
     "dotenv": "^8.2.0",
