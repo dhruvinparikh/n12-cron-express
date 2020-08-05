@@ -2,7 +2,7 @@ module.exports = {
   up: (queryInterface) => {
     return queryInterface.bulkInsert('notifications', [
       {
-        uuid: '00000001-2c32-4564-8d54-e00d4001b744',
+        uuid: '6247e0e5-0e64-4d95-a113-20330be75251',
         created_at: new Date(),
         updated_at: new Date(),
         name: 'totalDAISupply',
@@ -11,7 +11,7 @@ module.exports = {
         d_app_uuid: '0d4d4c2c-f403-4046-b07e-606a60af9f7f'
       },
       {
-        uuid: '00000002-2c32-4564-8d54-e00d4001b744',
+        uuid: '48c075fd-4144-4bcd-9ba8-7916999a6f92',
         created_at: new Date(),
         updated_at: new Date(),
         name: 'WETH <> WBTC',

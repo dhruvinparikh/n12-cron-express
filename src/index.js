@@ -58,4 +58,7 @@ const job = async () => {
 // schedule takes two arguments, cron time and the task to call when we reach that time
 cron.schedule(morningScheduleat7, job);
 
+// for debugging
+// job();
+
 app.listen("3128");

@@ -31,7 +31,7 @@ module.exports = (sequelize, DataTypes) => {
       primaryKey:true
     },
   }, {
-    tableName: 'notificationdata',
+    tableName: 'notification_data',
     underscored: true, 
     sequelize,
     modelName: 'NotificationData',

@@ -7,7 +7,7 @@
 const { web3 } = require("../../../services/web3");
 
 const abi = require("./dai.json");
-const contractAddress = process.env.MAKERDAO_CONTRACT_ADDRESS;
+const contractAddress = process.env.MKR_DAI_ADDRESS;
 var makerContract = new web3.eth.Contract(abi, contractAddress);
 
 async function getTotalDAISupply(options = {}) {
