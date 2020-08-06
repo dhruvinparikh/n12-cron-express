@@ -30,24 +30,24 @@ async function getUniswapV2PairData(options = {}) {
     uniswapV2Pairabi,
     WBTC2WETHPairAddress
   );
-  const result = WBTC2WETHPairInstance.methods.getReserves().call(options);
-  const { ChainId, Token, WETH, Fetcher, Route } = require("@uniswap/sdk");
+  const result = await WBTC2WETHPairInstance.methods.getReserves().call(options);
+  // const { ChainId, Token, WETH, Fetcher, Route } = require("@uniswap/sdk");
 
-  const DAI = new Token(
-    ChainId.MAINNET,
-    // "0x6B175474E89094C44Da98b954EedeAC495271d0F",
-    "0x2260FAC5E5542a773Aa44fBCfeDf7C193bc2C599",
-    18
-  );
+  // const DAI = new Token(
+  //   ChainId.MAINNET,
+  //   // "0x6B175474E89094C44Da98b954EedeAC495271d0F",
+  //   "0x2260FAC5E5542a773Aa44fBCfeDf7C193bc2C599",
+  //   18
+  // );
 
-  // note that you may want/need to handle this async code differently,
-  // for example if top-level await is not an option
-  const pair = await Fetcher.fetchPairData(DAI, WETH[DAI.chainId]);
+  // // note that you may want/need to handle this async code differently,
+  // // for example if top-level await is not an option
+  // const pair = await Fetcher.fetchPairData(DAI, WETH[DAI.chainId]);
 
-  const route = new Route([pair], WETH[DAI.chainId]);
+  // const route = new Route([pair], WETH[DAI.chainId]);
 
-  console.log(route.midPrice.toSignificant(6)); // 201.306
-  console.log(route.midPrice.invert().toSignificant(6)); // 0.00496756
+  // console.log(route.midPrice.toSignificant(6)); // 201.306
+  // console.log(route.midPrice.invert().toSignificant(6)); // 0.00496756
   return result;
 }
 
