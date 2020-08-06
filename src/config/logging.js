@@ -31,4 +31,4 @@ logger.configure({
     logger.debug('Logging initialized at debug level');
   }
   
-  module.exports= logger;
+  module.exports = logger;

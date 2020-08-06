@@ -10,7 +10,7 @@ const {
 } = require("./services/db/");
 const { getBlockNumber } = require("./services/web3");
 const morningScheduleat7 = process.env.CRON_EXPRESSION;
-const { logger } = require("./config/logging");
+const logger = require("./config/logging");
 
 const app = express();
 
