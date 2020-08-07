@@ -1,3 +1,4 @@
+const config = require('../../config');
 const { createLogger, format, transports } = require("winston");
 
 const { combine, timestamp, simple } = format;
@@ -19,7 +20,7 @@ logger.configure({
     level: 'verbose',
     transports: [
       new transports.Console({
-        level: process.env.NODE_ENV === 'production' ? 'info' : 'debug'
+        level: config.logger.getLoggerLevel()
       }),
       new DailyRotateFile({
         filename: 'cron.log'
@@ -27,7 +28,7 @@ logger.configure({
     ]
   });
   
-  if (process.env.NODE_ENV !== 'production') {
+  if (config.db.getEnv() !== 'production') {
     logger.debug('Logging initialized at debug level');
   }
   

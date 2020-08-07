@@ -1,16 +1,17 @@
-require("dotenv").config("../.env");
+const config = require("./config")
 const cron = require("node-cron");
 const async = require("async");
 const express = require("express");
 const notifications = require("./libs/");
+
 const {
   getAllNotifications,
   insertNotificationData,
   updateNotificationData,
 } = require("./services/db/");
 const { getBlockNumber } = require("./services/web3");
-const morningScheduleat7 = process.env.CRON_EXPRESSION;
-const logger = require("./config/logging");
+const morningScheduleat7 = config.cron.getCRONGetData();
+const logger = require("./services/logger");
 
 const app = express();
 
