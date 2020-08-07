@@ -25,21 +25,3 @@ module.exports = {
   sendEmail,
   createConfirmEmailData,
 };
-
-// TODO DP : Remove after done with reference
-// const mailgun = require("mailgun-js");
-//   const DOMAIN = "sandboxbcad8842884f4f52b90c8b21556ae5b8.mailgun.org";
-//   const mg = mailgun({
-//     apiKey: "ec05d3f41c3090636af9d14d4ee2cbcf-f7d0b107-de5fa173",
-//     domain: DOMAIN,
-//   });
-//   const data = {
-//     from:
-//       "Mailgun Sandbox <postmaster@sandboxbcad8842884f4f52b90c8b21556ae5b8.mailgun.org>",
-//     to: "dparikh@blockxlabs.com",
-//     subject: "Hello",
-//     text: "Testing some Mailgun awesomness!",
-//   };
-//   mg.messages().send(data, function (error, body) {
-//     console.log(body);
-//   });
