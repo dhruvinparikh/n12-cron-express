@@ -5,9 +5,10 @@
 // Info @ https://etherscan.io/address/0x9f8f72aa9304c8b593d555f12ef6589cc3a579a2#code
 
 const { web3 } = require("../../../services/web3");
-
+const config = require('./config');
 const abi = require("./dai.json");
-const contractAddress = process.env.MKR_DAI_ADDRESS;
+
+const contractAddress = config.getMakerDaiAdress();
 var makerContract = new web3.eth.Contract(abi, contractAddress);
 
 async function getTotalDAISupply(options = {}) {

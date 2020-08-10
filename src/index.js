@@ -1,4 +1,3 @@
-require("dotenv").config("../.env");
 const { CronJob } = require("cron");
 const async = require("async");
 const express = require("express");
@@ -6,9 +5,10 @@ const notifications = require("./libs/");
 const DB = require("./services/db/");
 const mailService = require("./services/email/mailgun");
 const { getBlockNumber } = require("./services/web3");
-const morningScheduleat7 = process.env.CRON_EXPRESSION_7_AM;
-const morningScheduleat8 = process.env.CRON_EXPRESSION_8_AM;
-const logger = require("./config/logging");
+const { cron } = require("./config");
+const morningScheduleat7 = cron.getCRONGetDataFor7AM();
+const morningScheduleat8 = cron.getCRONGetDataFor8AM();
+const { logger } = require("./services/logger");
 
 const app = express();
 
@@ -44,8 +44,6 @@ const backUpJobFn = async () => {
         }
       );
       logger.info(`Finished pushing data for ${notificationUuid}`);
-      // const result = await notifications["48c075fd-4144-4bcd-9ba8-7916999a6f92"]();
-      // return result;
     } catch (e) {
       logger.error(`Error [${notificationUuid}]=> ${e}`);
     }
@@ -56,7 +54,6 @@ const notifyJobFn = async () => {
   const allUsers = await DB.getAllUsers();
   async.mapSeries(allUsers, async (user) => {
     const emailContent = { notifications: [] };
-    const userEmail = user.email;
     const userNotifications = await DB.getAllUserNotifications({
       where: { userUuid: user.uuid },
     });
@@ -84,18 +81,16 @@ const notifyJobFn = async () => {
   });
 };
 
-notifyJobFn().then(console.log);
-// backUpJobFn().then(console.log);
 // At 07:00 on every day-of-month
 // from 1 through 31 and on every day-of-week from Sunday through Saturday
 // in every month from January through December. => 0 7 1-31 1-12 sun-sat
 // schedule takes two arguments, cron time and the task to call when we reach that time
 // cron.schedule(morningScheduleat7, job);
 
-// const backupJob = new CronJob(morningScheduleat7, backUpJobFn);
-// const notifyJob = new CronJob(morningScheduleat8, notifyJob);
+const backupJob = new CronJob(morningScheduleat7, backUpJobFn);
+const notifyJob = new CronJob(morningScheduleat8, notifyJob);
 
-// backupJob.start();
-// notifyJob.start();
+backupJob.start();
+notifyJob.start();
 
 app.listen("3128");

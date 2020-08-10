@@ -12,13 +12,12 @@ N12 cron services.
 ```
 - Run seeds
 
-```
-./node_modules/.bin/sequelize-cli db:seed:all --config ./src/db/config/config.json --seeders-path ./src/db/seeders
+./node_modules/.bin/sequelize-cli db:seed:all --config ./src/db/config/config.js --seeders-path ./src/db/seeders
 ```
 
 - Undo All Seeds
 
 ```
-./node_modules/.bin/sequelize-cli db:seed:undo:all --config ./src/db/config/config.json --seeders-path ./src/db/seeders
+./node_modules/.bin/sequelize-cli db:seed:undo:all --config ./src/db/config/config.js --seeders-path ./src/db/seeders
 ```
 
