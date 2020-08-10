@@ -3,11 +3,8 @@ const { CronJob } = require("cron");
 const async = require("async");
 const express = require("express");
 const notifications = require("./libs/");
-const {
-  getAllNotifications,
-  insertNotificationData,
-  updateNotificationData,
-} = require("./services/db/");
+const DB = require("./services/db/");
+const mailService = require("./services/email/mailgun");
 const { getBlockNumber } = require("./services/web3");
 const morningScheduleat7 = process.env.CRON_EXPRESSION_7_AM;
 const morningScheduleat8 = process.env.CRON_EXPRESSION_8_AM;
@@ -16,7 +13,7 @@ const logger = require("./config/logging");
 const app = express();
 
 const backUpJobFn = async () => {
-  const result = await getAllNotifications();
+  const result = await DB.getAllNotifications();
   const notificationUuidArr = result.map(({ uuid }) => uuid);
   // Iterates over the collection.
   async.mapSeries(notificationUuidArr, async (notificationUuid) => {
@@ -32,14 +29,14 @@ const backUpJobFn = async () => {
       logger.info(`Finished fetching data for ${notificationUuid}`);
       // create an entry in data table
       logger.info(`Started pushing blocknumber for ${notificationUuid}`);
-      const insertTX = await insertNotificationData({
+      const insertTX = await DB.insertNotificationData({
         notificationUuid,
         blockNumber,
       });
       logger.info(`Finished pushing blocknumber for ${notificationUuid}`);
       const data = JSON.stringify({ result });
       logger.info(`Started pushing data for ${notificationUuid}`);
-      await updateNotificationData(
+      await DB.updateNotificationData(
         { data },
         {
           notificationUuid: insertTX.notificationUuid,
@@ -55,12 +52,40 @@ const backUpJobFn = async () => {
   });
 };
 
-backUpJobFn().then(console.log);
+const notifyJobFn = async () => {
+  const allUsers = await DB.getAllUsers();
+  async.mapSeries(allUsers, async (user) => {
+    const emailContent = { notifications: [] };
+    const userEmail = user.email;
+    const userNotifications = await DB.getAllUserNotifications({
+      where: { userUuid: user.uuid },
+    });
+    await async.mapSeries(userNotifications, async (userNotification) => {
+      const dappDetails = await DB.getDApp({
+        where: { uuid: userNotification.dAppUuid },
+      });
+      const notificationDetails = await DB.getNotification({
+        where: { uuid: userNotification.notificationsUuid },
+      });
+      const notificationData = await DB.getNotificationData({
+        where: { notificationUuid: notificationDetails.uuid },
+      });
+      emailContent.notifications.push({
+        dappName: dappDetails.name,
+        notificationName: notificationDetails.name,
+        result: notificationData.data.toString(),
+      });
+    });
+    const emailData = mailService.createNotificationEmailTemplate(
+      user,
+      emailContent
+    );
+    await mailService.sendEmail(emailData);
+  });
+};
 
-// const notifyJobFn = async () => {
-
-// };
-
+notifyJobFn().then(console.log);
+// backUpJobFn().then(console.log);
 // At 07:00 on every day-of-month
 // from 1 through 31 and on every day-of-week from Sunday through Saturday
 // in every month from January through December. => 0 7 1-31 1-12 sun-sat
