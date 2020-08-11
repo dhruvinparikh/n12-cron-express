@@ -5,6 +5,11 @@ const getAll = async () => {
   return result;
 };
 
+const get = async (options = {}) => {
+  const result = await NotificationData.findOne(options);
+  return result;
+};
+
 const create = async (record) => {
   const result = await NotificationData.create(record);
   return result;
@@ -19,4 +24,5 @@ module.exports = {
   getAllNotificationData: getAll,
   insertNotificationData: create,
   updateNotificationData: update,
+  getNotificationData: get,
 };

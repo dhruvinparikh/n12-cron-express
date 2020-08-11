@@ -1,8 +1,13 @@
 const { Notifications } = require("../../db/models");
 
-const getAll = async () => {
-  const result = await Notifications.findAll();
+const getAll = async (options = {}) => {
+  const result = await Notifications.findAll(options);
   return result;
 };
 
-module.exports = { getAllNotifications: getAll };
+const get = async (options = {}) => {
+  const result = await Notifications.findOne(options);
+  return result;
+};
+
+module.exports = { getAllNotifications: getAll, getNotification: get };
