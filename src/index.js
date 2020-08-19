@@ -1,6 +1,7 @@
 const { CronJob } = require("cron");
 const async = require("async");
 const express = require("express");
+const sequelize = require("sequelize");
 const notifications = require("./libs/");
 const DB = require("./services/db/");
 const mailService = require("./services/email/mailgun");
@@ -51,6 +52,8 @@ const backUpJobFn = async () => {
 };
 
 const notifyJobFn = async () => {
+  // const TODAY_START = new Date().setHours(0, 0, 0, 0);
+  // const NOW = new Date();
   const allUsers = await DB.getAllUsers();
   async.mapSeries(allUsers, async (user) => {
     const emailContent = { notifications: [] };
@@ -65,7 +68,16 @@ const notifyJobFn = async () => {
         where: { uuid: userNotification.notificationsUuid },
       });
       const notificationData = await DB.getNotificationData({
-        where: { notificationUuid: notificationDetails.uuid },
+        where: {
+          notificationUuid: notificationDetails.uuid,
+          // created: {
+          //   [Op.gt]: TODAY_START,
+          //   [Op.lt]: NOW,
+          // },
+          // group: [
+          //   sequelize.fn("date_trunc", "day", sequelize.col("createdAt")),
+          // ],
+        },
       });
       emailContent.notifications.push({
         dappName: dappDetails.name,
@@ -73,13 +85,12 @@ const notifyJobFn = async () => {
         result: notificationData.data.toString(),
       });
     });
-    const emailData = mailService.createNotificationEmailTemplate(
-      user,
-      emailContent
-    );
+    const emailData = mailService.createNotificationEmailTemplate(user, emailContent);
     await mailService.sendEmail(emailData);
   });
 };
+
+backUpJobFn().then(console.log);
 
 // At 07:00 on every day-of-month
 // from 1 through 31 and on every day-of-week from Sunday through Saturday
@@ -87,10 +98,10 @@ const notifyJobFn = async () => {
 // schedule takes two arguments, cron time and the task to call when we reach that time
 // cron.schedule(morningScheduleat7, job);
 
-const backupJob = new CronJob(morningScheduleat7, backUpJobFn);
-const notifyJob = new CronJob(morningScheduleat8, notifyJob);
+// const backupJob = new CronJob(morningScheduleat7, backUpJobFn);
+// const notifyJob = new CronJob(morningScheduleat8, notifyJobFn);
 
-backupJob.start();
-notifyJob.start();
+// backupJob.start();
+// notifyJob.start();
 
 app.listen("3128");
