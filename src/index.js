@@ -1,7 +1,7 @@
 const { CronJob } = require("cron");
 const async = require("async");
 const express = require("express");
-const sequelize = require("sequelize");
+const { Op } = require("sequelize");
 const notifications = require("./libs/");
 const DB = require("./services/db/");
 const mailService = require("./services/email/mailgun");
@@ -52,56 +52,97 @@ const backUpJobFn = async () => {
 };
 
 const notifyJobFn = async () => {
-  // const TODAY_START = new Date().setHours(0, 0, 0, 0);
-  // const NOW = new Date();
-  const allUsers = await DB.getAllUsers();
-  async.mapSeries(allUsers, async (user) => {
-    const emailContent = { notifications: [] };
-    const userNotifications = await DB.getAllUserNotifications({
-      where: { userUuid: user.uuid },
-    });
-    await async.mapSeries(userNotifications, async (userNotification) => {
-      const dappDetails = await DB.getDApp({
-        where: { uuid: userNotification.dAppUuid },
+  try {
+    logger.info(`Getting today's start time`);
+    const TODAY_START = 1597759000;
+    logger.info(`Finished getting today's start time`);
+    logger.info(`Start getting today's date`);
+    const NOW = new Date();
+    logger.info(`Finished getting today's date`);
+    logger.info(`Start getting all subscribers`);
+    const allUsers = await DB.getAllUsers();
+    logger.info(`Finished getting all subscribers`);
+    try {
+      logger.info(`Start iterating through all the subscribers`);
+      async.mapSeries(allUsers, async (user) => {
+        const emailContent = { notifications: [] };
+        let userNotifications;
+        try {
+          logger.info(`Start getting all the notifications`);
+          userNotifications = await DB.getAllUserNotifications({
+            where: { userUuid: user.uuid },
+          });
+          logger.info(`Finished getting all the notifications`);
+        } catch (e) {
+          logger.error("Error getting all the notifications");
+        }
+        try {
+          logger.info(`Start creating email content for ${user.email}`);
+          await async.mapSeries(userNotifications, async (userNotification) => {
+            logger.info(`Start getting dapp details having uuid ${userNotification.dAppUuid}`);
+            const dappDetails = await DB.getDApp({
+              where: { uuid: userNotification.dAppUuid },
+            });
+            logger.info(`Finished getting dapp details having uuid ${userNotification.dAppUuid}`);
+            logger.info(
+              `Start getting notification details having uuid ${userNotification.notificationsUuid}`
+            );
+            const notificationDetails = await DB.getNotification({
+              where: { uuid: userNotification.notificationsUuid },
+            });
+            logger.info(
+              `Finished getting notification details having uuid ${userNotification.notificationsUuid}`
+            );
+            logger.info(
+              `Start getting notification result having uuid ${notificationDetails.uuid}`
+            );
+            const notificationData = await DB.getNotificationData({
+              where: {
+                notificationUuid: notificationDetails.uuid,
+                created_at: {
+                  [Op.gt]: TODAY_START,
+                  [Op.lt]: NOW,
+                },
+              },
+            });
+            logger.info(
+              `Finished getting notification result having uuid ${notificationDetails.uuid}`
+            );
+            if (notificationData) {
+              emailContent.notifications.push({
+                dappName: dappDetails.name,
+                notificationName: notificationDetails.name,
+                result: notificationData.data.toString(),
+              });
+            }
+          });
+        } catch (e) {
+          logger.error(`Error creating email content for ${user.email}`);
+        }
+        if (emailContent.notifications.length > 0) {
+          try {
+            logger.info(`Start sending notification to ${user.email}`);
+            const emailData = mailService.createNotificationEmailTemplate(user, emailContent);
+            await mailService.sendEmail(emailData);
+            logger.info(`Finished sending notification to ${user.email}`);
+          } catch (e) {
+            logger.error(`Error sending email to ${user.email} => ${e}`);
+          }
+        }
       });
-      const notificationDetails = await DB.getNotification({
-        where: { uuid: userNotification.notificationsUuid },
-      });
-      const notificationData = await DB.getNotificationData({
-        where: {
-          notificationUuid: notificationDetails.uuid,
-          // created: {
-          //   [Op.gt]: TODAY_START,
-          //   [Op.lt]: NOW,
-          // },
-          // group: [
-          //   sequelize.fn("date_trunc", "day", sequelize.col("createdAt")),
-          // ],
-        },
-      });
-      emailContent.notifications.push({
-        dappName: dappDetails.name,
-        notificationName: notificationDetails.name,
-        result: notificationData.data.toString(),
-      });
-    });
-    const emailData = mailService.createNotificationEmailTemplate(user, emailContent);
-    await mailService.sendEmail(emailData);
-  });
+      logger.info(`Done iterating through all the subscribers`);
+    } catch (e) {
+      logger.error("Unable to initiate notifying", e);
+    }
+  } catch (e) {
+    logger.error("Error in the notifying subscribers", e);
+  }
 };
 
-backUpJobFn().then(console.log);
+const backupJob = new CronJob(morningScheduleat7, backUpJobFn);
+const notifyJob = new CronJob(morningScheduleat8, notifyJobFn);
 
-// At 07:00 on every day-of-month
-// from 1 through 31 and on every day-of-week from Sunday through Saturday
-// in every month from January through December. => 0 7 1-31 1-12 sun-sat
-// schedule takes two arguments, cron time and the task to call when we reach that time
-// cron.schedule(morningScheduleat7, job);
-
-// const backupJob = new CronJob(morningScheduleat7, backUpJobFn);
-// const notifyJob = new CronJob(morningScheduleat8, notifyJobFn);
-
-// backupJob.start();
-// notifyJob.start();
+backupJob.start();
+notifyJob.start();
 
 app.listen("3128");
