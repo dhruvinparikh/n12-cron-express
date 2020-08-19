@@ -4949,6 +4949,6 @@ module.exports = {
     ]);
   },
   down: (queryInterface) => {
-    return queryInterface.bulkDelete('notifications', null, {});
+    return queryInterface.bulkDelete('notifications', null, {where:{d_app_uuid:['4c4c510c-f12c-4c62-b824-c511490f3a80']}});
   }
 };
