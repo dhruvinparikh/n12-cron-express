@@ -8,10 +8,11 @@ N12 cron services.
 - `npm install`
 - Run migrations
 ```
-./node_modules/.bin/runmigration --migrations-path ./src/db/migrations --models-path ./src/db/models/
+./node_modules/.bin/runmigration --migrations-path ./src/db/migrations --models-path ./src/db/models/ --seeders-path ./src/db/seeders
 ```
 - Run seeds
 
+```bash
 ./node_modules/.bin/sequelize-cli db:seed:all --config ./src/db/config/config.js --seeders-path ./src/db/seeders
 ```
 

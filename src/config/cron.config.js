@@ -4,13 +4,13 @@ const cronSchema = convict({
   cronGetDataAt7AM: {
     doc: "Set CRON to get data currently set (morningScheduleat7)",
     format: "String",
-    default: "0 7 1-31 1-12 sun-sat",
+    default: "0 7 1-31 0-11 sun-sat",
     env: "CRON_GET_DATA_7_AM",
   },
   cronGetDataAt8AM: {
     doc: "Set CRON to get data currently set (morningScheduleat8)",
     format: "String",
-    default: "0 8 1-31 1-12 sun-sat",
+    default: "0 8 1-31 0-11 sun-sat",
     env: "CRON_GET_DATA_8_AM",
   },
 });
