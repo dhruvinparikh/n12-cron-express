@@ -11,8 +11,7 @@ const uniswapSchema = convict({
   uniswapV2FactoryInitCodeHash: {
     doc: "Uniswap V2 factory init code hash",
     format: "String",
-    default:
-      "0x96e8ac4277198ff8b6f785478aa9a39f403cb768dd02cbee326c3e7da348845f",
+    default: "0x96e8ac4277198ff8b6f785478aa9a39f403cb768dd02cbee326c3e7da348845f",
     env: "UNISWAP_V2_FACTORY_INIT_CODE_HASH",
   },
   wethAddress: {

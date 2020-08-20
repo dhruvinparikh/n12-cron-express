@@ -54,7 +54,7 @@ const backUpJobFn = async () => {
 const notifyJobFn = async () => {
   try {
     logger.info(`Getting today's start time`);
-    const TODAY_START = 1597759000;
+    const TODAY_START = new Date().setHours(0, 0, 0, 0);;
     logger.info(`Finished getting today's start time`);
     logger.info(`Start getting today's date`);
     const NOW = new Date();
