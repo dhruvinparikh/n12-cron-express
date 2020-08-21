@@ -1,3 +1,5 @@
+require("dotenv").config();
+
 const { CronJob } = require("cron");
 const async = require("async");
 const express = require("express");

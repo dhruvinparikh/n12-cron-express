@@ -13,6 +13,6 @@ module.exports = {
     ]);
   },
   down: (queryInterface) => {
-    return queryInterface.bulkDelete("notifications", null, {});
+    return queryInterface.bulkDelete('notifications', null, {where:{uuid:['6247e0e5-0e64-4d95-a113-20330be75251']}});
   },
 };

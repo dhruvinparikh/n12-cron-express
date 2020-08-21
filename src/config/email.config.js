@@ -13,18 +13,18 @@ const contractSchema = convict({
     default: null,
     env: "MAIL_GUN_DOMAIN",
   },
+  NotificationEmailTemplate: {
+    doc: "template id of notification email in mailgun",
+    format: "String",
+    default: "notification_template",
+    env: "MAIL_GUN_NOTIFICATION_EMAIL_TEMPLATE",
+  },
   EmailFrom: {
     doc: "Email sender name and address",
     format: "String",
     default: null,
-    env: "EMAIL_FROM",
-  },
-  NotificationEmailTemplate: {
-    doc: "template id of notification email in mailgun",
-    format: "String",
-    default: null,
-    env: "NOTIFICATION_EMAIL_TEMPLATE",
-  },
+    env: "MAIL_GUN_EMAIL_FROM",
+  }
 });
 
 const getMailGunAPIKey = () => {
